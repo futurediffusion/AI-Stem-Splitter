@@ -22,16 +22,19 @@ package correctly.
 
 ## Usage
 
-Run the GUI application:
+Run the GUI application on any platform:
 
 ```bash
 python -m src.gui_app
 ```
 
+Windows users can also launch the program by double-clicking
+`start_app.bat`.
+
 On first launch you'll be asked to select a directory to store the downloaded
 Demucs/Spleeter models. Separated tracks for each file are written under a
-`stems/` folder inside the chosen output directory. By default the output
-location is `~/.ai_stem_splitter/output/stems`.
+`stems/` folder inside the chosen output directory. By default the models and
+output are stored inside the repository under `models/` and `output/`.
 
 The GUI accepts MP3, WAV, FLAC and OGG files. The application can run entirely
 on the CPU, or it will use the GPU when one is available. It has been tested on
