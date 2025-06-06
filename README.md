@@ -30,6 +30,8 @@ python -m src.gui_app
 
 Windows users can also launch the program by double-clicking
 `start_app.bat`.
+Double-clicking the script will create a virtual environment on the first run
+and reuse it on subsequent launches.
 
 On first launch you'll be asked to select a directory to store the downloaded
 Demucs/Spleeter models. Separated tracks for each file are written under a
