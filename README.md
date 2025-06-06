@@ -16,8 +16,8 @@ Install Python packages:
 pip install -r requirements.txt
 ```
 
-The requirements file pins `numpy<2`, `torch==2.2.2` and
-`torchaudio==2.2.2` for compatibility with Demucs. If you already have an
+The requirements file pins `numpy<2`, `torch==2.2.2`,
+`torchaudio==2.2.2` and `diffq` for compatibility with Demucs. If you already have an
 existing environment, recreate it or reinstall the dependencies using the
 updated requirements file.
 
