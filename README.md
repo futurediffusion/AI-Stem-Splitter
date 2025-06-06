@@ -1,12 +1,11 @@
 # AI-Stem-Splitter
 
-A simple GUI for separating audio stems using Demucs or Spleeter.
+A simple GUI for separating audio stems using Demucs.
 
 ## Requirements
 
-- Python 3.8 or newer
-- Optional CUDA enabled GPU (Demucs is automatically chosen when at least
-  4&nbsp;GB of VRAM are detected)
+- Python 3.10 or newer recommended
+- Optional CUDA enabled GPU for faster processing
 
 
 ## Installation
@@ -17,11 +16,10 @@ Install Python packages:
 pip install -r requirements.txt
 ```
 
-The requirements file pins `numpy<2`, `spleeter==2.4.2`,
-`tensorflow==2.12.1`, `torch==2.2.2` and `torchaudio==2.2.2` for
-compatibility. If you already have an existing
-environment, recreate it or reinstall the dependencies using the updated
-requirements file.
+The requirements file pins `numpy<2`, `torch==2.2.2`,
+`torchaudio==2.2.2` and `diffq` for compatibility with Demucs. If you already have an
+existing environment, recreate it or reinstall the dependencies using the
+updated requirements file.
 
 Run these commands from the repository root so that the GUI can import the
 package correctly.
@@ -40,8 +38,8 @@ Double-clicking the script will create a virtual environment on the first run
 and reuse it on subsequent launches.
 
 On first launch you'll be asked to select a directory to store the downloaded
-Demucs/Spleeter models. Separated tracks for each file are written under a
-`stems/` folder inside the chosen output directory. By default the models and
+Demucs model. Separated tracks for each file are written under a
+`stems/` folder inside the chosen output directory. By default the model and
 output are stored inside the repository under `models/` and `output/`.
 
 The GUI accepts MP3, WAV, FLAC and OGG files. The application can run entirely
