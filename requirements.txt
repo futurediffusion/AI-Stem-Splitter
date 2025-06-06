@@ -1,0 +1,5 @@
+torch
+torchaudio
+spleeter
+demucs
+PyQt5
