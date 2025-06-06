@@ -1,5 +1,6 @@
 @echo off
 setlocal
+cd /d "%~dp0"
 
 if not exist "%~dp0venv\Scripts\python.exe" (
     python -m venv "%~dp0venv"
@@ -8,3 +9,4 @@ if not exist "%~dp0venv\Scripts\python.exe" (
 
 call "%~dp0venv\Scripts\activate"
 python -m src.gui_app
+pause
