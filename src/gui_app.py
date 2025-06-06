@@ -124,30 +124,18 @@ class StemGUI(QWidget):
             self.log_widget.addItem("Finished")
 
     def select_model(self):
-        """Choose model based on available VRAM."""
-        if torch.cuda.is_available():
-            vram = torch.cuda.get_device_properties(0).total_memory / (1024 ** 3)
-        else:
-            vram = 0
-        if vram < 4:
-            return "spleeter"
-        else:
-            return "demucs"
+        """Always use Demucs for separation."""
+        return "demucs"
 
     def run_separation(self, filepath, model_type):
         dest = self._make_dest(filepath)
         os.environ.setdefault("HF_HOME", self.config.model_dir)
         os.environ.setdefault("MODEL_PATH", self.config.model_dir)
-        if model_type == "demucs":
-            from demucs.apply import apply_model
-            from demucs.pretrained import get_model
-            # Use a lightweight Demucs model by default to keep memory usage low
-            model = get_model("mdx_extra_q")
-            apply_model(model, filepath, dest=dest)
-        else:
-            from spleeter.separator import Separator
-            separator = Separator("spleeter:2stems")
-            separator.separate_to_file(filepath, dest)
+        from demucs.apply import apply_model
+        from demucs.pretrained import get_model
+        # Use a lightweight Demucs model by default to keep memory usage low
+        model = get_model("mdx_extra_q")
+        apply_model(model, filepath, dest=dest)
 
     def _make_dest(self, filepath: str) -> str:
         base = Path(filepath).stem
