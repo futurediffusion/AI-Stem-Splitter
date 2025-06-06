@@ -17,8 +17,9 @@ Install Python packages:
 pip install -r requirements.txt
 ```
 
-The requirements file pins `numpy<2`, `spleeter==2.4.2` and
-`tensorflow==2.12.1` for compatibility. If you already have an existing
+The requirements file pins `numpy<2`, `spleeter==2.4.2`,
+`tensorflow==2.12.1`, `torch==2.2.2` and `torchaudio==2.2.2` for
+compatibility. If you already have an existing
 environment, recreate it or reinstall the dependencies using the updated
 requirements file.
 
