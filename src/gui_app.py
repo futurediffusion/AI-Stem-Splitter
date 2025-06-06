@@ -132,7 +132,8 @@ class StemGUI(QWidget):
         if model_type == "demucs":
             from demucs.apply import apply_model
             from demucs.pretrained import get_model
-            model = get_model("htdemucs")
+            # Use a lightweight Demucs model by default to keep memory usage low
+            model = get_model("mdx_extra_q")
             apply_model(model, filepath, dest=dest)
         else:
             from spleeter.separator import Separator
