@@ -17,6 +17,11 @@ Install Python packages:
 pip install -r requirements.txt
 ```
 
+The requirements file pins `numpy<2`, `spleeter==2.4.2` and
+`tensorflow==2.12.1` for compatibility. If you already have an existing
+environment, recreate it or reinstall the dependencies using the updated
+requirements file.
+
 Run these commands from the repository root so that the GUI can import the
 package correctly.
 
