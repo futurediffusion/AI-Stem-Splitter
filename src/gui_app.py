@@ -1,12 +1,14 @@
 import sys
 import os
 import threading
+from pathlib import Path
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QLabel,
-    QPushButton, QFileDialog, QListWidget
+    QPushButton, QFileDialog, QListWidget, QProgressBar,
 )
 import torch
+from .config import Config
 
 
 class DropListWidget(QListWidget):
@@ -41,6 +43,7 @@ class StemGUI(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("AI Stem Splitter")
+        self.config = Config()
         layout = QVBoxLayout()
 
         self.info = QLabel("Drag audio files here or choose a folder")
@@ -53,9 +56,23 @@ class StemGUI(QWidget):
         self.folder_btn.clicked.connect(self.choose_folder)
         layout.addWidget(self.folder_btn)
 
+        self.model_dir_btn = QPushButton("Set Model Directory")
+        self.model_dir_btn.clicked.connect(self.choose_model_dir)
+        layout.addWidget(self.model_dir_btn)
+
+        self.output_dir_btn = QPushButton("Set Output Directory")
+        self.output_dir_btn.clicked.connect(self.choose_output_dir)
+        layout.addWidget(self.output_dir_btn)
+
         self.process_btn = QPushButton("Process")
         self.process_btn.clicked.connect(self.start_processing)
         layout.addWidget(self.process_btn)
+
+        self.progress_bar = QProgressBar()
+        layout.addWidget(self.progress_bar)
+
+        self.log_widget = QListWidget()
+        layout.addWidget(self.log_widget)
 
         self.setLayout(layout)
 
@@ -66,21 +83,36 @@ class StemGUI(QWidget):
                 if name.lower().endswith((".mp3", ".wav", ".flac", ".ogg")):
                     self.list_widget.addItem(os.path.join(path, name))
 
+    def choose_model_dir(self):
+        path = QFileDialog.getExistingDirectory(self, "Select Model Directory", self.config.model_dir)
+        if path:
+            self.config.model_dir = path
+
+    def choose_output_dir(self):
+        path = QFileDialog.getExistingDirectory(self, "Select Output Directory", self.config.output_dir)
+        if path:
+            self.config.output_dir = path
+
     def start_processing(self):
         files = [self.list_widget.item(i).text() for i in range(self.list_widget.count())]
         if not files:
             QtWidgets.QMessageBox.warning(self, "No files", "Add files to process")
             return
+        self.progress_bar.setMaximum(len(files))
+        self.progress_bar.setValue(0)
         self.process_btn.setEnabled(False)
         thread = threading.Thread(target=self.process_files, args=(files,), daemon=True)
         thread.start()
 
     def process_files(self, files):
         model_type = self.select_model()
-        for file in files:
+        for idx, file in enumerate(files, 1):
+            self.log_widget.addItem(f"Processing {Path(file).name}")
             self.run_separation(file, model_type)
+            self.progress_bar.setValue(idx)
         QtWidgets.QMessageBox.information(self, "Done", "Processing finished")
         self.process_btn.setEnabled(True)
+        self.log_widget.addItem("Finished")
 
     def select_model(self):
         """Choose model based on available VRAM."""
@@ -94,15 +126,24 @@ class StemGUI(QWidget):
             return "demucs"
 
     def run_separation(self, filepath, model_type):
+        dest = self._make_dest(filepath)
+        os.environ.setdefault("HF_HOME", self.config.model_dir)
+        os.environ.setdefault("MODEL_PATH", self.config.model_dir)
         if model_type == "demucs":
             from demucs.apply import apply_model
             from demucs.pretrained import get_model
             model = get_model("htdemucs")
-            apply_model(model, filepath, dest=os.path.join(os.path.dirname(filepath), "stems"))
+            apply_model(model, filepath, dest=dest)
         else:
             from spleeter.separator import Separator
             separator = Separator("spleeter:2stems")
-            separator.separate_to_file(filepath, os.path.join(os.path.dirname(filepath), "stems"))
+            separator.separate_to_file(filepath, dest)
+
+    def _make_dest(self, filepath: str) -> str:
+        base = Path(filepath).stem
+        dest = Path(self.config.output_dir) / "stems" / base
+        dest.mkdir(parents=True, exist_ok=True)
+        return str(dest)
 
 
 def main():
