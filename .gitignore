@@ -1,0 +1,20 @@
+# Virtual environment directory
+/venv/
+
+# Python cache directories
+__pycache__/
+
+# Model and output directories
+/models/
+/output/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor or temporary files
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
