@@ -106,13 +106,22 @@ class StemGUI(QWidget):
 
     def process_files(self, files):
         model_type = self.select_model()
-        for idx, file in enumerate(files, 1):
-            self.log_widget.addItem(f"Processing {Path(file).name}")
-            self.run_separation(file, model_type)
-            self.progress_bar.setValue(idx)
-        QtWidgets.QMessageBox.information(self, "Done", "Processing finished")
-        self.process_btn.setEnabled(True)
-        self.log_widget.addItem("Finished")
+        try:
+            for idx, file in enumerate(files, 1):
+                self.log_widget.addItem(f"Processing {Path(file).name}")
+                try:
+                    self.run_separation(file, model_type)
+                except Exception as e:  # noqa: BLE001
+                    self.log_widget.addItem(
+                        f"Error processing {Path(file).name}: {e}"
+                    )
+                self.progress_bar.setValue(idx)
+            QtWidgets.QMessageBox.information(
+                self, "Done", "Processing finished"
+            )
+        finally:
+            self.process_btn.setEnabled(True)
+            self.log_widget.addItem("Finished")
 
     def select_model(self):
         """Choose model based on available VRAM."""
